@@ -1,6 +1,5 @@
-// src/controllers/notesController.js
 import createHttpError from 'http-errors';
-import { Note } from '../models/note.js';
+import Note from '../models/note.js';
 
 export const getAllNotes = async (req, res, next) => {
   try {
@@ -14,13 +13,16 @@ export const getAllNotes = async (req, res, next) => {
       filter.$text = { $search: search };
     }
 
-    const totalNotes = await Note.countDocuments(filter);
-    const totalPages = Math.ceil(totalNotes / perPageNum) || 1;
+    // ВИКОНУЄМО ПАРАЛЕЛЬНО
+    const [totalNotes, notes] = await Promise.all([
+      Note.countDocuments(filter),
+      Note.find(filter)
+        .skip((pageNum - 1) * perPageNum)
+        .limit(perPageNum)
+        .sort({ createdAt: -1 }),
+    ]);
 
-    const notes = await Note.find(filter)
-      .skip((pageNum - 1) * perPageNum)
-      .limit(perPageNum)
-      .sort({ createdAt: -1 });
+    const totalPages = Math.ceil(totalNotes / perPageNum) || 1;
 
     res.status(200).json({
       page: pageNum,
