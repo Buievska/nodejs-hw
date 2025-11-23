@@ -1,33 +1,36 @@
-// src/server.js
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import { connectMongoDB } from './db/connectMongoDB.js';
 import notesRoutes from './routes/notesRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 import { logger } from './middleware/logger.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { errors as celebrateErrors } from 'celebrate';
 
 const app = express();
+const PORT = process.env.PORT ?? 3030;
 
 app.use(logger);
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CLIENT_ORIGIN || 'http://localhost:3000',
+    credentials: true,
+  }),
+);
 app.use(express.json());
+app.use(cookieParser());
 
-// Роуті
+app.use(authRoutes);
 app.use(notesRoutes);
 
-// Celebrate errors handler (повинен бути перед загальним errorHandler)
 app.use(celebrateErrors());
 
-// 404
 app.use(notFoundHandler);
 
-// загальний error handler
 app.use(errorHandler);
-
-const PORT = process.env.PORT || 3000;
 
 const startServer = async () => {
   await connectMongoDB();

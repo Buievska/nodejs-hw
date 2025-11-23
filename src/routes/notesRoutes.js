@@ -15,8 +15,11 @@ import {
 } from '../validations/notesValidation.js';
 
 import { celebrate, Segments } from 'celebrate';
+import { authenticate } from '../middleware/authenticate.js'; // <-- ІМПОРТ
 
 const router = Router();
+
+router.use('/notes', authenticate);
 
 router.get(
   '/notes',
