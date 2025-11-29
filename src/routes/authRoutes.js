@@ -1,4 +1,3 @@
-// src/routes/authRoutes.js
 import { Router } from 'express';
 import { celebrate, Segments } from 'celebrate';
 import {
@@ -6,32 +5,46 @@ import {
   loginUser,
   refreshUserSession,
   logoutUser,
+  requestResetEmail, // імпорт
+  resetPassword, // імпорт
 } from '../controllers/authController.js';
 import {
   registerUserSchema,
   loginUserSchema,
+  requestResetEmailSchema, // імпорт
+  resetPasswordSchema, // імпорт
 } from '../validations/authValidation.js';
 
 const router = Router();
 
-// POST /auth/register
+// Існуючі роути
 router.post(
   '/auth/register',
   celebrate({ [Segments.BODY]: registerUserSchema }),
   registerUser,
 );
 
-// POST /auth/login
 router.post(
   '/auth/login',
   celebrate({ [Segments.BODY]: loginUserSchema }),
   loginUser,
 );
 
-// POST /auth/refresh
 router.post('/auth/refresh', refreshUserSession);
-
-// POST /auth/logout
 router.post('/auth/logout', logoutUser);
+
+// --- НОВІ РОУТИ ---
+
+router.post(
+  '/auth/request-reset-email',
+  celebrate({ [Segments.BODY]: requestResetEmailSchema }),
+  requestResetEmail,
+);
+
+router.post(
+  '/auth/reset-password',
+  celebrate({ [Segments.BODY]: resetPasswordSchema }),
+  resetPassword,
+);
 
 export default router;

@@ -1,4 +1,3 @@
-// src/models/user.js
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 
@@ -20,6 +19,10 @@ const userSchema = new Schema(
       type: String,
       required: true,
       minlength: 8,
+    },
+    avatar: {
+      type: String,
+      default: 'https://ac.goit.global/fullstack/react/default-avatar.jpg',
     },
   },
   {
