@@ -47,7 +47,7 @@ export const loginUser = async (req, res, next) => {
       throw createHttpError(401, 'Invalid credentials');
     }
 
-    const passwordValid = await user.checkPassword(password);
+    const passwordValid = await bcrypt.compare(password, user.password);
     if (!passwordValid) {
       throw createHttpError(401, 'Invalid credentials');
     }
@@ -151,6 +151,7 @@ export const requestResetEmail = async (req, res, next) => {
     });
 
     await sendEmail({
+      from: process.env.SMTP_FROM,
       to: email,
       subject: 'Reset your password',
       html,

@@ -22,13 +22,6 @@ export const updateUserAvatar = async (req, res, next) => {
     }
 
     res.status(200).json({
-      status: 200,
-      message: 'Avatar updated successfully',
-      data: {
-        url: avatarUrl,
-      },
-      // Згідно ТЗ просять об'єкт { url: посилання },
-      // але зазвичай повертають статус. Підлаштуємо під вимогу:
       url: avatarUrl,
     });
   } catch (err) {
